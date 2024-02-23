@@ -1,13 +1,14 @@
-'use client'
-import { ProgressCircle } from '@tremor/react'
-import React from 'react'
+"use client";
+import { ProgressCircle } from "@tremor/react";
+import React from "react";
 
 type Props = {
-  value: number
-  description: React.ReactNode
-}
+  value: number;
+  description: React.ReactNode;
+};
 
-const CircleProgress = ({ description, value = 0 }: Props) => {
+const CircleProgress = ({ description, value }: Props) => {
+  if (!value) value = 0;
   return (
     <div className="flex gap-4 items-center">
       <ProgressCircle
@@ -23,7 +24,7 @@ const CircleProgress = ({ description, value = 0 }: Props) => {
         <p className="text-muted-foreground">{description}</p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CircleProgress
+export default CircleProgress;

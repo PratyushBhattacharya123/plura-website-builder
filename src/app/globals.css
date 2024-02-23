@@ -119,3 +119,26 @@ B (255 */
     transform: scale(1);
   }
 }
+
+@media screen and (max-width: 640px) {
+  *::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+*::-webkit-scrollbar {
+  overflow: scroll;
+  width: 10px;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.1),
+    inset 5px 0 5px rgba(0, 0, 0, 0.2);
+  border-radius: 1rem;
+}

@@ -1,7 +1,7 @@
-import Link from 'next/link'
-import React from 'react'
+import Link from "next/link";
+import React from "react";
 
-type Props = {}
+type Props = {};
 
 const Unauthorized = (props: Props) => {
   return (
@@ -10,12 +10,12 @@ const Unauthorized = (props: Props) => {
       <p>Please contact support or your agency owner to get access</p>
       <Link
         href="/"
-        className="mt-4 bg-primary p-2"
+        className="mt-4 bg-primary p-2 px-3 rounded-md hover:scale-[1.02] transition-all duration-200 text-white"
       >
         Back to home
       </Link>
     </div>
-  )
-}
+  );
+};
 
-export default Unauthorized
+export default Unauthorized;

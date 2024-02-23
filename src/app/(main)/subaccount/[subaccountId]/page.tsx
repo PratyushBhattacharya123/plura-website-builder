@@ -235,7 +235,7 @@ const SubaccountPageId = async ({ params, searchParams }: Props) => {
                 index="created"
                 categories={['amount_total']}
                 colors={['primary']}
-                yAxisWidth={30}
+                yAxisWidth={40}
                 showAnimation={true}
               />
             </Card>
