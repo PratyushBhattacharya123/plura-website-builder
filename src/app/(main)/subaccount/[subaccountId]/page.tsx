@@ -60,54 +60,54 @@ const SubaccountPageId = async ({ params, searchParams }: Props) => {
 
   if (!subaccountDetails) return;
 
-  if (subaccountDetails.connectAccountId) {
-    const response = await stripe.accounts.retrieve({
-      stripeAccount: subaccountDetails.connectAccountId,
-    });
-    currency = response.default_currency?.toUpperCase() || "USD";
-    const checkoutSessions = await stripe.checkout.sessions.list(
-      { created: { gte: startDate, lte: endDate }, limit: 100 },
-      {
-        stripeAccount: subaccountDetails.connectAccountId,
-      }
-    );
-    sessions = checkoutSessions.data.map((session) => ({
-      ...session,
-      created: new Date(session.created).toLocaleDateString(),
-      amount_total: session.amount_total ? session.amount_total / 100 : 0,
-    }));
+  // if (subaccountDetails.connectAccountId) {
+  //   const response = await stripe.accounts.retrieve({
+  //     stripeAccount: subaccountDetails.connectAccountId,
+  //   });
+  //   currency = response.default_currency?.toUpperCase() || "USD";
+  //   const checkoutSessions = await stripe.checkout.sessions.list(
+  //     { created: { gte: startDate, lte: endDate }, limit: 100 },
+  //     {
+  //       stripeAccount: subaccountDetails.connectAccountId,
+  //     }
+  //   );
+  //   sessions = checkoutSessions.data.map((session) => ({
+  //     ...session,
+  //     created: new Date(session.created).toLocaleDateString(),
+  //     amount_total: session.amount_total ? session.amount_total / 100 : 0,
+  //   }));
 
-    totalClosedSessions = checkoutSessions.data
-      .filter((session) => session.status === "complete")
-      .map((session) => ({
-        ...session,
-        created: new Date(session.created).toLocaleDateString(),
-        amount_total: session.amount_total ? session.amount_total / 100 : 0,
-      }));
+  //   totalClosedSessions = checkoutSessions.data
+  //     .filter((session) => session.status === "complete")
+  //     .map((session) => ({
+  //       ...session,
+  //       created: new Date(session.created).toLocaleDateString(),
+  //       amount_total: session.amount_total ? session.amount_total / 100 : 0,
+  //     }));
 
-    totalPendingSessions = checkoutSessions.data
-      .filter(
-        (session) => session.status === "open" || session.status === "expired"
-      )
-      .map((session) => ({
-        ...session,
-        created: new Date(session.created).toLocaleDateString(),
-        amount_total: session.amount_total ? session.amount_total / 100 : 0,
-      }));
+  //   totalPendingSessions = checkoutSessions.data
+  //     .filter(
+  //       (session) => session.status === "open" || session.status === "expired"
+  //     )
+  //     .map((session) => ({
+  //       ...session,
+  //       created: new Date(session.created).toLocaleDateString(),
+  //       amount_total: session.amount_total ? session.amount_total / 100 : 0,
+  //     }));
 
-    net = +totalClosedSessions
-      .reduce((total, session) => total + (session.amount_total || 0), 0)
-      .toFixed(2);
+  //   net = +totalClosedSessions
+  //     .reduce((total, session) => total + (session.amount_total || 0), 0)
+  //     .toFixed(2);
 
-    potentialIncome = +totalPendingSessions
-      .reduce((total, session) => total + (session.amount_total || 0), 0)
-      .toFixed(2);
+  //   potentialIncome = +totalPendingSessions
+  //     .reduce((total, session) => total + (session.amount_total || 0), 0)
+  //     .toFixed(2);
 
-    closingRate = +(
-      (totalClosedSessions.length / checkoutSessions.data.length) *
-      100
-    ).toFixed(2);
-  }
+  //   closingRate = +(
+  //     (totalClosedSessions.length / checkoutSessions.data.length) *
+  //     100
+  //   ).toFixed(2);
+  // }
 
   const funnels = await db.funnel.findMany({
     where: {
@@ -191,24 +191,21 @@ const SubaccountPageId = async ({ params, searchParams }: Props) => {
                   value={closingRate}
                   description={
                     <>
-                      {sessions && (
-                        <div className="flex flex-col">
-                          Total Carts Opened
-                          <div className="flex gap-2">
-                            <ShoppingCart className="text-rose-700" />
-                            {sessions.length}
-                          </div>
+                      <div className="flex flex-col">
+                        Total Carts Opened
+                        <div className="flex gap-2">
+                          <ShoppingCart className="text-rose-700" />
+                          {sessions || 0}
                         </div>
-                      )}
-                      {totalClosedSessions && (
-                        <div className="flex flex-col">
-                          Won Carts
-                          <div className="flex gap-2">
-                            <ShoppingCart className="text-emerald-700" />
-                            {totalClosedSessions.length}
-                          </div>
+                      </div>
+
+                      <div className="flex flex-col">
+                        Won Carts
+                        <div className="flex gap-2">
+                          <ShoppingCart className="text-emerald-700" />
+                          {totalClosedSessions || 0}
                         </div>
-                      )}
+                      </div>
                     </>
                   }
                 />
@@ -259,7 +256,7 @@ const SubaccountPageId = async ({ params, searchParams }: Props) => {
                     +12.3%
                   </BadgeDelta>
                 </CardTitle>
-                <Table>
+                {/* <Table>
                   <TableHeader className="!sticky !top-0">
                     <TableRow>
                       <TableHead className="w-[300px]">Email</TableHead>
@@ -294,7 +291,7 @@ const SubaccountPageId = async ({ params, searchParams }: Props) => {
                         ))
                       : "No Data"}
                   </TableBody>
-                </Table>
+                </Table> */}
               </CardHeader>
             </Card>
           </div>
