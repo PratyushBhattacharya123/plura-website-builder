@@ -13,7 +13,6 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { stripe } from "@/lib/stripe";
-import { v4 } from "uuid";
 
 type Props = {
   params: {
@@ -51,13 +50,13 @@ const LaunchPadPage = async ({ params, searchParams }: Props) => {
   if (searchParams.code) {
     if (!agencyDetails.connectAccountId) {
       try {
-        // const response = await stripe.oauth.token({
-        //   grant_type: "authorization_code",
-        //   code: searchParams.code,
-        // });
+        const response = await stripe.oauth.token({
+          grant_type: "authorization_code",
+          code: searchParams.code,
+        });
         await db.agency.update({
           where: { id: params.agencyId },
-          data: { connectAccountId: v4() },
+          data: { connectAccountId: response.stripe_user_id },
         });
         connectedStripeAccount = true;
       } catch (error) {
