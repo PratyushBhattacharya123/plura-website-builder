@@ -13,6 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { stripe } from "@/lib/stripe";
+import { v4 } from "uuid";
 
 type Props = {
   params: {
@@ -48,17 +49,17 @@ const LaunchPadPage = async ({ params, searchParams }: Props) => {
   let connectedStripeAccount = false;
 
   if (searchParams.code) {
-    connectedStripeAccount = true;
     if (!agencyDetails.connectAccountId) {
       try {
-        const response = await stripe.oauth.token({
-          grant_type: "authorization_code",
-          code: searchParams.code,
-        });
+        // const response = await stripe.oauth.token({
+        //   grant_type: "authorization_code",
+        //   code: searchParams.code,
+        // });
         await db.agency.update({
           where: { id: params.agencyId },
-          data: { connectAccountId: response.stripe_user_id },
+          data: { connectAccountId: v4() },
         });
+        connectedStripeAccount = true;
       } catch (error) {
         console.log("🔴 Could not connect stripe account");
       }
