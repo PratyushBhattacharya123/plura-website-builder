@@ -14,7 +14,6 @@ import { CheckCircleIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { v4 } from "uuid";
 
 type Props = {
   searchParams: {
@@ -55,13 +54,13 @@ const LaunchPad = async ({ params, searchParams }: Props) => {
   if (searchParams.code) {
     if (!subaccountDetails.connectAccountId) {
       try {
-        // const response = await stripe.oauth.token({
-        //   grant_type: "authorization_code",
-        //   code: searchParams.code,
-        // });
+        const response = await stripe.oauth.token({
+          grant_type: "authorization_code",
+          code: searchParams.code,
+        });
         await db.subAccount.update({
           where: { id: params.subaccountId },
-          data: { connectAccountId: v4() },
+          data: { connectAccountId: response.stripe_user_id },
         });
         connectedStripeAccount = true;
       } catch (error) {
