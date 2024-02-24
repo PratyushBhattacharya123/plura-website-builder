@@ -30,7 +30,7 @@ const Page = async ({
 }) => {
   let currency = "USD";
   let sessions;
-  let totalClosedSessions = 0;
+  let totalClosedSessions;
   let totalPendingSessions;
   let net = 0;
   let potentialIncome = 0;
@@ -53,52 +53,52 @@ const Page = async ({
     },
   });
 
-  // if (agencyDetails.connectAccountId) {
-  //   const response = await stripe.accounts.retrieve({
-  //     stripeAccount: agencyDetails.connectAccountId,
-  //   });
+  if (agencyDetails.connectAccountId) {
+    const response = await stripe.accounts.retrieve({
+      stripeAccount: agencyDetails.connectAccountId,
+    });
 
-  //   currency = response.default_currency?.toUpperCase() || "USD";
-  //   const checkoutSessions = await stripe.checkout.sessions.list(
-  //     {
-  //       created: { gte: startDate, lte: endDate },
-  //       limit: 100,
-  //     },
-  //     { stripeAccount: agencyDetails.connectAccountId }
-  //   );
-  //   sessions = checkoutSessions.data;
-  //   totalClosedSessions = checkoutSessions.data
-  //     .filter((session) => session.status === "complete")
-  //     .map((session) => ({
-  //       ...session,
-  //       created: new Date(session.created).toLocaleDateString(),
-  //       amount_total: session.amount_total ? session.amount_total / 100 : 0,
-  //     }));
+    currency = response.default_currency?.toUpperCase() || "USD";
+    const checkoutSessions = await stripe.checkout.sessions.list(
+      {
+        created: { gte: startDate, lte: endDate },
+        limit: 100,
+      },
+      { stripeAccount: agencyDetails.connectAccountId }
+    );
+    sessions = checkoutSessions.data;
+    totalClosedSessions = checkoutSessions.data
+      .filter((session) => session.status === "complete")
+      .map((session) => ({
+        ...session,
+        created: new Date(session.created).toLocaleDateString(),
+        amount_total: session.amount_total ? session.amount_total / 100 : 0,
+      }));
 
-  //   totalPendingSessions = checkoutSessions.data
-  //     .filter((session) => session.status === "open")
-  //     .map((session) => ({
-  //       ...session,
-  //       created: new Date(session.created).toLocaleDateString(),
-  //       amount_total: session.amount_total ? session.amount_total / 100 : 0,
-  //     }));
-  //   net = +totalClosedSessions
-  //     .reduce((total, session) => total + (session.amount_total || 0), 0)
-  //     .toFixed(2);
+    totalPendingSessions = checkoutSessions.data
+      .filter((session) => session.status === "open")
+      .map((session) => ({
+        ...session,
+        created: new Date(session.created).toLocaleDateString(),
+        amount_total: session.amount_total ? session.amount_total / 100 : 0,
+      }));
+    net = +totalClosedSessions
+      .reduce((total, session) => total + (session.amount_total || 0), 0)
+      .toFixed(2);
 
-  //   potentialIncome = +totalPendingSessions
-  //     .reduce((total, session) => total + (session.amount_total || 0), 0)
-  //     .toFixed(2);
+    potentialIncome = +totalPendingSessions
+      .reduce((total, session) => total + (session.amount_total || 0), 0)
+      .toFixed(2);
 
-  //   closingRate = +(
-  //     (totalClosedSessions.length / checkoutSessions.data.length) *
-  //     100
-  //   ).toFixed(2);
-  // }
+    closingRate = +(
+      (totalClosedSessions.length / checkoutSessions.data.length) *
+      100
+    ).toFixed(2);
+  }
 
   return (
     <div className="relative h-full">
-      {!agencyDetails.connectAccountId && (
+      {/* {!agencyDetails.connectAccountId && (
         <div className="absolute -top-10 -left-10 right-0 bottom-0 z-30 flex items-center justify-center backdrop-blur-md bg-background/50">
           <Card>
             <CardHeader>
@@ -116,7 +116,7 @@ const Page = async ({
             </CardHeader>
           </Card>
         </div>
-      )}
+      )} */}
       <h1 className="text-4xl">Dashboard</h1>
       <Separator className=" my-6" />
       <div className="flex flex-col gap-4 pb-6">
@@ -198,7 +198,10 @@ const Page = async ({
             </CardHeader>
             <AreaChart
               className="text-sm stroke-primary"
-              data={[totalClosedSessions || [], totalPendingSessions || []]}
+              data={[
+                ...(totalClosedSessions || []),
+                ...(totalPendingSessions || []),
+              ]}
               index="created"
               categories={["amount_total"]}
               colors={["primary"]}
@@ -220,16 +223,16 @@ const Page = async ({
                         Abandoned
                         <div className="flex gap-2">
                           <ShoppingCart className="text-rose-700" />
-                          {sessions || 0}
+                          {sessions.length}
                         </div>
                       </div>
                     )}
                     {totalClosedSessions && (
-                      <div className="flex flex-col">
+                      <div className="felx flex-col">
                         Won Carts
                         <div className="flex gap-2">
                           <ShoppingCart className="text-emerald-700" />
-                          {totalClosedSessions || 0}
+                          {totalClosedSessions.length}
                         </div>
                       </div>
                     )}
